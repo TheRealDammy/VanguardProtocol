@@ -7,6 +7,7 @@ namespace VanguardProtocol.Characters
     [RequireComponent(typeof(AbilitySystemComponent))]
     [RequireComponent(typeof(PlayerInputHandler))]
     [RequireComponent(typeof(CameraController))]
+    [RequireComponent(typeof(CharacterController))]
     public class PlayerCharacter : CharacterBase
     {
         [Header("Settings")]

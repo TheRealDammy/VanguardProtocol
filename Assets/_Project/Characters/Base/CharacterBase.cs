@@ -4,7 +4,6 @@ using VanguardProtocol.AbilitySystem;
 
 namespace VanguardProtocol.Characters
 {
-    [RequireComponent(typeof(CharacterController))]
     public class CharacterBase : MonoBehaviour
     {
         [Header("Config")]
