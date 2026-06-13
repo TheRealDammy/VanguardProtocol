@@ -14,8 +14,18 @@ namespace VanguardProtocol.AI.BehaviourTrees
             return new BTSelector("Root", new List<BTNode>
             {
                 // 1st priority - self preservation
+                new BTCondition("IsStaggered",
+                    ctx => ctx.Owner.Tags.HasTag(GameplayTags.Status_Staggered),
+                    new BTAction("StaggeredHold", ctx =>
+                    {
+                        ctx.Owner.StopMoving();
+                        return BTNodeStatus.Running;
+                    })
+                ),
+
+                // 2nd priority - self preservation
                 new BTCondition("IsLowHP",
-                    ctx => ctx.Owner.tags.HasTag(GameplayTags.State_LowHealth),
+                    ctx => ctx.Owner.Tags.HasTag(GameplayTags.State_LowHealth),
                      new BTSequence("Retreat", new List<BTNode>
                      {
                         new BTAction("EnterRetreat", ctx =>
@@ -27,12 +37,12 @@ namespace VanguardProtocol.AI.BehaviourTrees
                      })
                 ),
 
-                // 2nd Priority - Aid player if in danger
+                // 3rd Priority - Aid player if in danger
                 new BTCondition("PlayerNeedsHelp", 
                     ctx =>
                     {
                         var player = GetPlayer(ctx);
-                        return player != null && player.GetHealthPercentage() < 0.3f && ctx.Owner.abilitySystem.IsAbilityReady(GameplayTags.Ability_Active);
+                        return player != null && player.GetHealthPercentage() < 0.3f && ctx.Owner.AbilitySystem.IsAbilityReady(GameplayTags.Ability_Active);
                     },
                     new BTSequence("AidPlayer", new List<BTNode>
                     {

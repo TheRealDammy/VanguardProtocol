@@ -41,7 +41,7 @@ namespace VanguardProtocol.Characters
 
         private void Update()
         {
-            if (!isAlive) return;
+            if (!IsAlive) return;
 
             HandleMovement();
             HandleGravity();
@@ -67,7 +67,7 @@ namespace VanguardProtocol.Characters
         {
             if (_isRolling) return;
 
-            float speed = attributes.moveSpeed.CurrentValue;
+            float speed = Attributes.moveSpeed.CurrentValue;
             if (_inputHandler.SprintHeld)
             {
                 speed *= _sprintMultiplier;
@@ -99,7 +99,7 @@ namespace VanguardProtocol.Characters
             _isRolling = true;
             _rollCooldownTimer = _rollCooldown;
 
-            tags.AddTag(GameplayTags.Status_Invisible);
+            Tags.AddTag(GameplayTags.Status_Invisible);
 
             Vector3 rollDirection = transform.forward;
 
@@ -122,23 +122,23 @@ namespace VanguardProtocol.Characters
                 yield return null;
             }
 
-            tags.RemoveTag(GameplayTags.Status_Invisible);
+            Tags.RemoveTag(GameplayTags.Status_Invisible);
             _isRolling = false;
         }
 
         // -- Abilities --
         private void HandleAbilityInput()
         {
-            if (abilitySystem == null) return;
+            if (AbilitySystem == null) return;
 
             if (_inputHandler.Ability1Pressed)
             {
-                abilitySystem.TryActivateAbility(GameplayTags.Ability_Active);
+                AbilitySystem.TryActivateAbility(GameplayTags.Ability_Rook_ShoulderBash);
             }
 
             if (_inputHandler.Ability2Pressed)
             {
-                abilitySystem.TryActivateAbility(GameplayTags.Ability_Active);
+                AbilitySystem.TryActivateAbility(GameplayTags.Ability_Rook_Flashbang);
             }
         }
     }

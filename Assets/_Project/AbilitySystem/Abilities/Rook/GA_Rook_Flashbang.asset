@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2f32c59d1e9aed48b7c5a02eafe8709, type: 3}
+  m_Name: GA_Rook_Flashbang
+  m_EditorClassIdentifier: 
+  abilityName: Rook Flashbang
+  cooldownDuration: 8
+  requiredTags: []
+  blockedTags: []
+  effectsToApply:
+  - {fileID: 11400000, guid: d3d2af4dd6270ee4b8e8719908e2b56b, type: 2}
+  _throwRange: 12
+  _blindRadius: 5
+  _fuseTime: 0.75

@@ -10,14 +10,15 @@ namespace VanguardProtocol.Characters
         [SerializeField] private AttributeSetConfig _attributeConfig;
 
         // -- Core System --
-        public AttributeSet attributes { get; private set; }
-        public GameplayTagContainer tags { get; private set; }
-        public AbilitySystemComponent abilitySystem { get; private set; }
+        public AttributeSet Attributes { get; private set; }
+        public GameplayTagContainer Tags { get; private set; }
+        public AbilitySystemComponent AbilitySystem { get; private set; }
+        public AttributeSetConfig Config => _attributeConfig;
 
         // -- Identity --
-        public GameplayTag roleTag { get; private set; }
-        public GameplayTag teamTag { get; private set; }
-        public bool isAlive { get; private set; } = true;
+        public GameplayTag RoleTag { get; private set; }
+        public GameplayTag TeamTag { get; private set; }
+        public bool IsAlive { get; private set; } = true;
 
         // -- Events --
         public event Action<CharacterBase> OnDeath;
@@ -26,7 +27,7 @@ namespace VanguardProtocol.Characters
 
         protected virtual void Awake()
         {
-            tags = new GameplayTagContainer();
+            Tags = new GameplayTagContainer();
 
             if (_attributeConfig == null)
             {
@@ -34,14 +35,14 @@ namespace VanguardProtocol.Characters
                 return;
             }
 
-            abilitySystem = GetComponent<AbilitySystemComponent>();
-            if (abilitySystem == null)
+            AbilitySystem = GetComponent<AbilitySystemComponent>();
+            if (AbilitySystem == null)
             {
                 Debug.LogError("CharacterBase requires an AbilitySystemComponent on the same GameObject.");
                 return;
             }
 
-            attributes = new AttributeSet(_attributeConfig);
+            Attributes = new AttributeSet(_attributeConfig);
 
             BindAttributeListeners();
         }
@@ -49,7 +50,7 @@ namespace VanguardProtocol.Characters
         private void BindAttributeListeners()
         {
             // Health change -> fire OnHealthChanged event + manage State.LowHealth tag
-            attributes.health.OnValueChanged += (oldVal, newVal) =>
+            Attributes.health.OnValueChanged += (oldVal, newVal) =>
             {
                 OnHealthChanged?.Invoke(oldVal, newVal);
                 EvaluateLowHealthTag(newVal);
@@ -63,49 +64,49 @@ namespace VanguardProtocol.Characters
 
         private void EvaluateLowHealthTag(float currentHealth)
         {
-            bool isLowHealth = currentHealth / attributes.maxHealth.CurrentValue <= 0.3f;
+            bool isLowHealth = currentHealth / Attributes.maxHealth.CurrentValue <= 0.3f;
 
-            if (isLowHealth && !tags.HasTag(GameplayTags.State_LowHealth))
+            if (isLowHealth && !Tags.HasTag(GameplayTags.State_LowHealth))
             {
-                tags.AddTag(GameplayTags.State_LowHealth);
+                Tags.AddTag(GameplayTags.State_LowHealth);
             }
-            else if (!isLowHealth && tags.HasTag(GameplayTags.State_LowHealth))
+            else if (!isLowHealth && Tags.HasTag(GameplayTags.State_LowHealth))
             {
-                tags.RemoveTag(GameplayTags.State_LowHealth);
+                Tags.RemoveTag(GameplayTags.State_LowHealth);
             }
         }
 
         // -- Public API --
         public void SetRole(GameplayTag roleTag)
         {
-            this.roleTag = roleTag;
-            tags.AddTag(roleTag);
+            this.RoleTag = roleTag;
+            Tags.AddTag(roleTag);
         }
 
         public void SetTeam(GameplayTag teamTag)
         {
-            this.teamTag = teamTag;
-            tags.AddTag(teamTag);
+            this.TeamTag = teamTag;
+            Tags.AddTag(teamTag);
         }
 
         // -- Damage (armor absorbtion first) --
         public void TakeDamage(float rawdamage, CharacterBase source = null)
         {
-            if (!isAlive) return;
+            if (!IsAlive) return;
 
-            float absorbedDamage = Mathf.Min(rawdamage, attributes.armor.CurrentValue);
+            float absorbedDamage = Mathf.Min(rawdamage, Attributes.armor.CurrentValue);
             float effectiveDamage = rawdamage - absorbedDamage;
 
             if (absorbedDamage > 0f)
             {
-                attributes.ApplyModification(
+                Attributes.ApplyModification(
                     new AttributeModification(
                         "Armor", ModificationType.Additive, -absorbedDamage, source));
             }
 
             if (effectiveDamage > 0f)
             {
-                attributes.ApplyModification(
+                Attributes.ApplyModification(
                     new AttributeModification(
                         "Health", ModificationType.Additive, -effectiveDamage, source));
 
@@ -115,22 +116,22 @@ namespace VanguardProtocol.Characters
 
         public void Heal(float healAmount, CharacterBase source = null)
         {
-            if (!isAlive) return;
-            attributes.ApplyModification(
+            if (!IsAlive) return;
+            Attributes.ApplyModification(
                 new AttributeModification(
                     "Health", ModificationType.Additive, healAmount, source));
         }
 
-        public float GetHealthPercentage() => attributes.health.CurrentValue / attributes.maxHealth.CurrentValue;
+        public float GetHealthPercentage() => Attributes.health.CurrentValue / Attributes.maxHealth.CurrentValue;
 
         // -- Death Handling --
         private void HandleDeath()
         {
-            if (!isAlive) return;
+            if (!IsAlive) return;
 
-            isAlive = false;
-            tags.AddTag(GameplayTags.State_Downed);
-            tags.RemoveTag(GameplayTags.State_InCombat);
+            IsAlive = false;
+            Tags.AddTag(GameplayTags.State_Downed);
+            Tags.RemoveTag(GameplayTags.State_InCombat);
 
             OnDeath?.Invoke(this);
         }

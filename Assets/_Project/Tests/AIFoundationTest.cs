@@ -18,7 +18,7 @@ public class AIFoundationTest : MonoBehaviour
         var root = new BTSequence("Root", new System.Collections.Generic.List<BTNode>
         {
             new BTCondition("IsAlive",
-                ctx => ctx.Owner.isAlive,
+                ctx => ctx.Owner.IsAlive,
                 new BTAction("LogAlive", ctx =>
                 {
                     Debug.Log($"[BT] {ctx.Owner.name} is alive " +

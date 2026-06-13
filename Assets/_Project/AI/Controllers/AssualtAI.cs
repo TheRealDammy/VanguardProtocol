@@ -9,10 +9,12 @@ namespace VanguardProtocol.AI
     public class AssaultAI : MonoBehaviour
     {
         [Header("Config")]
-        [SerializeField] private float _engageRange = 8f;
+        //[SerializeField] private float _engageRange = 8f;
+        // _engageRange reserved for future flank-route trigger distance
         [SerializeField] private float _attackRange = 5f;
         [SerializeField] private float _attackDamage = 12f;
         [SerializeField] private float _attackRate = 0.8f;
+        [SerializeField] private float _shoulderBashRange = 7f;
 
         private AICharacterBase _ai;
         private BehaviourTrees.BehaviourTree _bt;
@@ -20,25 +22,17 @@ namespace VanguardProtocol.AI
 
         private void Awake()
         {
-            Debug.Log($"[AssaultAI] Awake fired on {gameObject.name}");
             _ai = GetComponent<AICharacterBase>();
             _bt = GetComponent<BehaviourTrees.BehaviourTree>();
-            Debug.Log($"[AssaultAI] AI: {_ai != null} | BT: {_bt != null}");
         }
 
         private void Start()
         {
-            Debug.Log($"[AssaultAI] Start fired");
             _ai.SetRole(GameplayTags.Role_Assault);
 
             var combatSubtree = BuildCombatSubtree();
             var root = BTBuilder_Common.BuildRoot(combatSubtree);
             _bt.Initialize(_ai, root);
-
-            if (!_ai.Agent.isOnNavMesh)
-                Debug.LogError($"[AssaultAI] {gameObject.name} is NOT on NavMesh — rebake required");
-            else
-                Debug.Log($"[AssaultAI] {gameObject.name} is on NavMesh");
         }
 
         private BTNode BuildCombatSubtree()
@@ -47,28 +41,39 @@ namespace VanguardProtocol.AI
             {
                 // Attack if in range
                 new BTCondition("InAttackRange",
-                    ctx => IsInAttackRange(ctx),
+                ctx => IsInAttackRange(ctx),
                     new BTSequence("Attack", new List<BTNode>
                     {
                         new BTTask_FaceTarget(),
-                        new BTAction("FireAtTarget", ctx =>
-                        {
-                            return TryAttack(ctx);
-                        })
+                        new BTAction("FireAtTarget", ctx => TryAttack(ctx))
                     })
+                ),
+
+                // Flashbang — target visible but still outside attack range
+                new BTCondition("CanFlashbang", ctx => CanUseAbility(ctx, GameplayTags.Ability_Rook_Flashbang)
+                    && ctx.Owner.GetDistanceToTarget(ctx.GetTarget()) > _attackRange,
+                    new BTAction("ThrowFlashbang", ctx => UseAbility(ctx, GameplayTags.Ability_Rook_Flashbang))
+                ),
+
+                // Shoulder Bash — gap closer + stagger when just outside attack range
+                new BTCondition("CanShoulderBash",ctx => CanUseAbility(ctx, GameplayTags.Ability_Rook_ShoulderBash) && InBashRange(ctx),
+                    new BTAction("ShoulderBash", ctx => UseAbility(ctx, GameplayTags.Ability_Rook_ShoulderBash))
                 ),
 
                 // Close distance aggressively
                 new BTCondition("HasTarget",
-                    ctx => ctx.GetTarget() != null,
+                ctx => ctx.GetTarget() != null,
                     new BTSequence("CloseDistance", new List<BTNode>
                     {
                         new BTAction("EnterFlanking", ctx =>
                         {
-                            ctx.Owner.StateMachine.TransitionTo(AIStateType.Flanking);
+                            if (!ctx.Owner.StateMachine.IsInState(AIStateType.Flanking))
+                            {
+                                ctx.Owner.StateMachine.TransitionTo(AIStateType.Flanking);
+                            }
                             return BTNodeStatus.Success;
                         }),
-                        new BTTask_MoveToTarget(_engageRange)
+                        new BTTask_MoveToTarget(_attackRange)
                     })
                 )
             });
@@ -91,23 +96,30 @@ namespace VanguardProtocol.AI
 
             _lastAttackTime = Time.time;
 
-            float damage = _ai.attributes.attackDamage.CurrentValue;
+            float damage = _ai.Attributes.attackDamage.CurrentValue;
             target.TakeDamage(damage, _ai);
 
             ThreatScorer.RegisterDamage(target, damage);
 
-            Debug.Log($"[AssaultAI] {_ai.name} attacked {target.name} " +
-                      $"for {damage} | Target HP: " +
-                      $"{target.attributes.health.CurrentValue:F1}");
-
-            // Rage Mode — State.LowHP tag fires extra aggression
-            if (_ai.tags.HasTag(GameplayTags.State_LowHealth))
-            {
-                target.TakeDamage(damage * 0.3f, _ai);
-                Debug.Log($"[AssaultAI] Rage Mode bonus damage!");
-            }
-
             return BTNodeStatus.Success;
+        }
+
+        private bool CanUseAbility(BTContext ctx, GameplayTag abilityTag)
+        {
+            return ctx.GetTarget() != null
+                && ctx.Owner.AbilitySystem.IsAbilityReady(abilityTag);
+        }
+
+        private bool InBashRange(BTContext ctx)
+        {
+            float dist = ctx.Owner.GetDistanceToTarget(ctx.GetTarget());
+            return dist > _attackRange && dist <= _shoulderBashRange;
+        }
+
+        private BTNodeStatus UseAbility(BTContext ctx, GameplayTag abilityTag)
+        {
+            bool activated = ctx.Owner.AbilitySystem.TryActivateAbility(abilityTag);
+            return activated ? BTNodeStatus.Success : BTNodeStatus.Failure;
         }
     }
 }

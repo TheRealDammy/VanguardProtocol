@@ -8,9 +8,6 @@ namespace VanguardProtocol.AI.BehaviourTrees
         [Header("Config")]
         [SerializeField] private float _tickRate = 0.1f; // 10 ticks per second
 
-        [SerializeField] private bool _debugIsRunning;
-        [SerializeField] private bool _debugHasRoot;
-
         private BTNode _rootNode;
         private BTContext _context;
         private float _tickTimer;
@@ -34,8 +31,6 @@ namespace VanguardProtocol.AI.BehaviourTrees
 
         private void Update()
         {
-            _debugIsRunning = _isRunning;
-            _debugHasRoot = _rootNode != null;
 
             if (!_isRunning || _rootNode == null) return;
 
@@ -43,7 +38,6 @@ namespace VanguardProtocol.AI.BehaviourTrees
             if (_tickTimer > 0) return;
 
             _tickTimer = _tickRate;
-            Debug.Log($"[BT] Ticking root on {_context.Owner.name}");
             _rootNode.Tick(_context); 
         }
     }

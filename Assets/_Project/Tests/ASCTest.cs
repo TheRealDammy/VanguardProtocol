@@ -23,17 +23,17 @@ public class ASCTest : MonoBehaviour
             modType = ModificationType.Additive
         });
 
-        Debug.Log($"MoveSpeed before: {character.attributes.moveSpeed.CurrentValue}");
-        Debug.Log($"Has Slowed before: {character.tags.HasTag(GameplayTags.Status_Slowed)}");
+        Debug.Log($"MoveSpeed before: {character.Attributes.moveSpeed.CurrentValue}");
+        Debug.Log($"Has Slowed before: {character.Tags.HasTag(GameplayTags.Status_Slowed)}");
 
         asc.ApplyEffect(slowEffect, character);
 
-        Debug.Log($"MoveSpeed after apply: {character.attributes.moveSpeed.CurrentValue}");
-        Debug.Log($"Has Slowed after apply: {character.tags.HasTag(GameplayTags.Status_Slowed)}");
+        Debug.Log($"MoveSpeed after apply: {character.Attributes.moveSpeed.CurrentValue}");
+        Debug.Log($"Has Slowed after apply: {character.Tags.HasTag(GameplayTags.Status_Slowed)}");
 
         yield return new WaitForSeconds(2.5f);
 
-        Debug.Log($"MoveSpeed after expiry: {character.attributes.moveSpeed.CurrentValue}");
-        Debug.Log($"Has Slowed after expiry: {character.tags.HasTag(GameplayTags.Status_Slowed)}");
+        Debug.Log($"MoveSpeed after expiry: {character.Attributes.moveSpeed.CurrentValue}");
+        Debug.Log($"Has Slowed after expiry: {character.Tags.HasTag(GameplayTags.Status_Slowed)}");
     }
 }

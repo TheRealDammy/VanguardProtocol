@@ -60,17 +60,37 @@ namespace VanguardProtocol.AbilitySystem
 
         public bool TryActivateAbility(GameplayTag abilityTag)
         {
-            if (Owner.tags.HasTag(GameplayTags.Ability_Blocked)) return false;
-            if (Owner.tags.HasTag(GameplayTags.Status_AbilityDisabled)) return false;
+            Debug.Log($"[ASC] TryActivate called: {abilityTag} (Hash: {abilityTag.hash}) on {Owner.name}");
+
+            if (Owner.Tags.HasTag(GameplayTags.Ability_Blocked))
+            {
+                Debug.Log($"[ASC] Blocked by Ability_Blocked tag");
+                return false;
+            }
+            if (Owner.Tags.HasTag(GameplayTags.Status_AbilityDisabled))
+            {
+                Debug.Log($"[ASC] Blocked by Status_AbilityDisabled tag");
+                return false;
+            }
 
             var ability = GetAbilityByTag(abilityTag);
             if (ability == null)
             {
-                Debug.LogWarning($"Ability with tag {abilityTag} not found on {Owner.name}");
+                Debug.LogWarning($"[ASC] No ability with tag {abilityTag} (Hash: {abilityTag.hash}) " +
+                                  $"granted to {Owner.name}. Granted abilities:");
+                foreach (var a in _grantedAbilities)
+                    Debug.LogWarning($"  - {a.abilityName}: {a.abilityTag} (Hash: {a.abilityTag.hash})");
                 return false;
             }
 
-            if (!ability.CanActivate(this)) return false;
+            if (!ability.CanActivate(this))
+            {
+                Debug.Log($"[ASC] CanActivate false — " +
+                          $"IsActive:{ability.isActive} " +
+                          $"CooldownReady:{ability.IsCoolDownReady(this)} " +
+                          $"CooldownRemaining:{ability.GetCooldownRemaining():F2}");
+                return false;
+            }
 
             ability.TryActivate(this);
             OnAbilityActivated?.Invoke(ability);
@@ -137,20 +157,20 @@ namespace VanguardProtocol.AbilitySystem
         // -- Internal Logic --
         private bool CanApplyEffect(GameplayEffect effect)
         {
-            var tags = Owner.tags;
+            var tags = Owner.Tags;
 
             // Check required tags
             foreach (var tagName in effect.requiredTags)
             {
                 var tag = new GameplayTag(tagName);
-                if (!Owner.tags.HasTag(tag))
+                if (!Owner.Tags.HasTag(tag))
                     return false;
             }
             // Check blocked tags
             foreach (var tagName in effect.blockedTags)
             {
                 var tag = new GameplayTag(tagName);
-                if (Owner.tags.HasTag(tag))
+                if (Owner.Tags.HasTag(tag))
                     return false;
             }
             return true;
@@ -160,7 +180,7 @@ namespace VanguardProtocol.AbilitySystem
         {
             foreach (var mod in effect.attributeModifiers)
             {
-                Owner.attributes.ApplyModification(new AttributeModification(mod.attributeName, mod.modType, mod.magnitude, source));
+                Owner.Attributes.ApplyModification(new AttributeModification(mod.attributeName, mod.modType, mod.magnitude, source));
             }
         }
 
@@ -173,7 +193,7 @@ namespace VanguardProtocol.AbilitySystem
             {
                 var tag = new GameplayTag(tagName);
                 activeEffect.grantedTags.Add(tag);
-                Owner.tags.AddTag(tag);
+                Owner.Tags.AddTag(tag);
             }
 
             // Apply initial modifiers
@@ -218,7 +238,7 @@ namespace VanguardProtocol.AbilitySystem
             // Remove granted tags
             foreach (var tag in activeEffect.grantedTags)
             {
-                Owner.tags.RemoveTag(tag);
+                Owner.Tags.RemoveTag(tag);
             }
 
             _activeEffects.Remove(activeEffect);

@@ -15,6 +15,7 @@ namespace VanguardProtocol.AbilitySystem
         public static readonly GameplayTag State_LowHealth = new GameplayTag("State.LowHealth");
         public static readonly GameplayTag State_Stationary = new GameplayTag("State.Stationary");
         public static readonly GameplayTag State_Downed = new GameplayTag("State.Downed");
+        public static readonly GameplayTag State_Regenerating = new GameplayTag("State.Regenerating");
 
         // -- Roles --
         public static readonly GameplayTag Role_Assault = new GameplayTag("Role.Assault");
@@ -29,6 +30,7 @@ namespace VanguardProtocol.AbilitySystem
         public static readonly GameplayTag Status_Blinded = new GameplayTag("Status.Blinded");
         public static readonly GameplayTag Status_Invisible = new GameplayTag("Status.Invisible");
         public static readonly GameplayTag Status_AbilityDisabled = new GameplayTag("Status.AbilityDisabled");
+        public static readonly GameplayTag Status_Staggered = new GameplayTag("Status.Staggered");
 
         // -- Ability Blocking --
         public static readonly GameplayTag Ability_Blocked = new GameplayTag("Ability.Blocked");
@@ -45,5 +47,9 @@ namespace VanguardProtocol.AbilitySystem
         // -- Teams --
         public static readonly GameplayTag Team_Red = new GameplayTag("Team.Red");
         public static readonly GameplayTag Team_Blue = new GameplayTag("Team.Blue");
+
+        // -- Rook Abilities
+        public static readonly GameplayTag Ability_Rook_ShoulderBash = new GameplayTag("Ability.Rook.ShoulderBash");
+        public static readonly GameplayTag Ability_Rook_Flashbang = new GameplayTag("Ability.Rook.Flashbang");
     }
 }

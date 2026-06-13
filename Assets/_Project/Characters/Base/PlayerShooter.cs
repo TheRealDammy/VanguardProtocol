@@ -32,7 +32,7 @@ namespace VanguardProtocol.Combat
 
         private void Update()
         {
-            if (!_character.isAlive)
+            if (!_character.IsAlive)
                 return;
             if (Time.time < _nextFireTime)
                 return;
@@ -68,14 +68,14 @@ namespace VanguardProtocol.Combat
                 return;
 
             // Team check
-            if (target.teamTag == _character.teamTag)
+            if (target.TeamTag == _character.TeamTag)
                 return;
 
-            float damage = _character.attributes.attackDamage.CurrentValue;
+            float damage = _character.Attributes.attackDamage.CurrentValue;
             target.TakeDamage(damage, _character);
 
             Debug.Log($"[Shooter] {_character.name} hit {target.name} " +
-                      $"for {damage}. Target HP: {target.attributes.health.CurrentValue:F1}");
+                      $"for {damage}. Target HP: {target.Attributes.health.CurrentValue:F1}");
         }
 
         private void DrawDebugRay(Vector3 origin, Vector3 direction, Color color)

@@ -66,7 +66,7 @@ namespace VanguardProtocol.AI
                 score += PlayerPriorityBonus;
 
             // Low health modifier
-            if (candidate.tags.HasTag(GameplayTags.State_LowHealth))
+            if (candidate.Tags.HasTag(GameplayTags.State_LowHealth))
                 score += LowHealthModifier;
 
             // Targeting penalty

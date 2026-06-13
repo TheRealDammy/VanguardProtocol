@@ -55,13 +55,13 @@ namespace VanguardProtocol.Characters
             var oldTag = GetTagForState(oldState);
             if (oldTag.IsValid())
             {
-                _owner.tags.RemoveTag(oldTag);
+                _owner.Tags.RemoveTag(oldTag);
             }
             // Add new state tag
             var newTag = GetTagForState(newState);
             if (newTag.IsValid())
             {
-                 _owner.tags.AddTag(newTag);
+                 _owner.Tags.AddTag(newTag);
             }
         }
 

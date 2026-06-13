@@ -19,7 +19,7 @@ namespace VanguardProtocol.AbilitySystem
         public GameplayTag[] blockedTags; // Tags that prevent activation of this ability
 
         [Header("Effects")]
-        public GameplayEffect effectToAppply;
+        public GameplayEffect[] effectsToApply;
 
         // runtime state
         [System.NonSerialized] public bool isActive = false;
@@ -45,7 +45,7 @@ namespace VanguardProtocol.AbilitySystem
 
         public bool IsCoolDownReady(AbilitySystemComponent asc)
         {
-            float adjustedCooldown = cooldownDuration / asc.Owner.attributes.abilityCooldownRate.CurrentValue; // Adjust cooldown by character's cooldown rate
+            float adjustedCooldown = cooldownDuration / asc.Owner.Attributes.abilityCooldownRate.CurrentValue; // Adjust cooldown by character's cooldown rate
             return Time.time - lastActivationTime >= adjustedCooldown;
         }
 
@@ -57,14 +57,14 @@ namespace VanguardProtocol.AbilitySystem
             lastActivationTime = Time.time;
             isActive = true;
 
-            asc.Owner.tags.AddTag(GameplayTags.Ability_Active); // Add a generic active tag, could be used for global checks
+            asc.Owner.Tags.AddTag(GameplayTags.Ability_Active); // Add a generic active tag, could be used for global checks
             OnAbilityEnded(asc);
         }
 
         public void EndAbility(AbilitySystemComponent asc)
         {
             isActive = false;
-            asc.Owner.tags.RemoveTag(GameplayTags.Ability_Active);
+            asc.Owner.Tags.RemoveTag(GameplayTags.Ability_Active);
             OnAbilityEnded(asc);
         }
 
@@ -88,7 +88,7 @@ namespace VanguardProtocol.AbilitySystem
 
         private bool MeetsTagRequirements(AbilitySystemComponent asc)
         {
-           var tags = asc.Owner.tags;
+           var tags = asc.Owner.Tags;
 
             // Check required tags
             foreach (var reqTag in requiredTags)

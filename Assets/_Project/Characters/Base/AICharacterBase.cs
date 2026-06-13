@@ -29,13 +29,13 @@ namespace VanguardProtocol.Characters
             StateMachine = GetComponent<AIStateMachine>();
 
             // sync navmesh agent with character movement
-            attributes.moveSpeed.OnValueChanged += (_, newValue) => Agent.speed = newValue;
+            Attributes.moveSpeed.OnValueChanged += (_, newValue) => Agent.speed = newValue;
         }
 
         private void Start()
         {
 
-            Agent.speed = attributes.moveSpeed.CurrentValue;
+            Agent.speed = Attributes.moveSpeed.CurrentValue;
 
             OnDeath += _ => Agent.isStopped = true;
         }
@@ -43,7 +43,7 @@ namespace VanguardProtocol.Characters
         // -- Navigation & Targeting --
         public void MoveTo(Vector3 destination)
         {
-            if (!isAlive || Agent.isStopped) return;
+            if (!IsAlive || Agent.isStopped) return;
             Agent.SetDestination(destination);
             Agent.isStopped = false;
         }

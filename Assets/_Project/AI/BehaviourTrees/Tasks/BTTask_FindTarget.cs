@@ -1,8 +1,9 @@
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using VanguardProtocol.AbilitySystem;
+using VanguardProtocol.AI;
 using VanguardProtocol.Characters;
 using VanguardProtocol.Systems;
-using VanguardProtocol.AI;
-using UnityEditor.ShaderGraph.Internal;
 
 namespace VanguardProtocol.AI.BehaviourTrees
 {
@@ -12,6 +13,12 @@ namespace VanguardProtocol.AI.BehaviourTrees
 
         public override BTNodeStatus Tick(BTContext ctx)
         {
+            if (ctx.Owner.Tags.HasTag(GameplayTags.Status_Blinded))
+            {
+                ctx.ClearData(BTContext.KEY_TARGET);
+                return BTNodeStatus.Failure;
+            }
+
             var enemies = TeamManager.Instance.GetAliveEnemies(ctx.Owner.GetTeam());
 
             if (enemies == null || enemies.Count == 0)
@@ -25,9 +32,6 @@ namespace VanguardProtocol.AI.BehaviourTrees
             if (best == null) return BTNodeStatus.Failure;
 
             ctx.SetTarget(best);
-
-            Debug.Log($"[BT] FindTarget — enemies found: {enemies.Count}");
-            Debug.Log($"[BT] FindTarget — best target: {best?.name ?? "null"}");
 
             return BTNodeStatus.Success;
         }
@@ -56,9 +60,6 @@ namespace VanguardProtocol.AI.BehaviourTrees
             }
 
             ctx.Owner.MoveTo(target.transform.position);
-
-            Debug.Log($"[BT] MoveToTarget — dist: {dist:F1} | acceptable: {_acceptableRange}");
-            Debug.Log($"[BT] MoveToTarget — calling MoveTo: {target.transform.position}");
 
             return BTNodeStatus.Running;
         }
@@ -153,7 +154,6 @@ namespace VanguardProtocol.AI.BehaviourTrees
             //In Range - Heal
             ctx.Owner.StopMoving();
             ally.Heal(20f, ctx.Owner);
-            Debug.Log($"[BT] {ctx.Owner.name} healed {ally.name}");
             return BTNodeStatus.Success;
         }
     }

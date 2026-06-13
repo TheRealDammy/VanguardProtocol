@@ -23,8 +23,6 @@ namespace VanguardProtocol.Systems
 
             // Start match
             MatchStateManager.Instance.StartMatch();
-
-            Debug.Log("[Bootstrapper] Match initialised");
         }
     }
 }

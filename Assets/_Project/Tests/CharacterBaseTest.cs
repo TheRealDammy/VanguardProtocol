@@ -26,8 +26,8 @@ public class CharacterBaseTest : MonoBehaviour
         character.Heal(15f); // 20 -> 35 (should remove low health tag)
         character.TakeDamage(40f); // 35 -> 0 (should trigger death)
 
-        Debug.Log($"Has Role_Assault tag: {character.tags.HasTag(GameplayTags.Role_Assault)}");
-        Debug.Log($"Has Team_Red tag: {character.tags.HasTag(GameplayTags.Team_Red)}");
-        Debug.Log($"Is Alive: {character.isAlive}");
+        Debug.Log($"Has Role_Assault tag: {character.Tags.HasTag(GameplayTags.Role_Assault)}");
+        Debug.Log($"Has Team_Red tag: {character.Tags.HasTag(GameplayTags.Team_Red)}");
+        Debug.Log($"Is Alive: {character.IsAlive}");
     }
 }

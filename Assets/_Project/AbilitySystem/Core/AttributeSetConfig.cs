@@ -17,5 +17,9 @@ namespace VanguardProtocol.AbilitySystem
 
         [Header("Abilities")]
         public float abilityCooldownRate = 1f; // Multiplier for how quickly abilities cooldown - 1.0 is normal, 2.0 is twice as fast, etc.
+
+        [Header("Regeneration")]
+        public float regenDelay = 3f;   // Seconds after last hit before regen starts
+        public float regenRate = 8f;   // HP per second
     }
 }

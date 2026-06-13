@@ -11,7 +11,7 @@ public class EnemySetup : MonoBehaviour
 
         character.OnDamageTaken += (source, amount) =>
             Debug.Log($"[TestEnemy] Took {amount} damage. " +
-                      $"HP: {character.attributes.health.CurrentValue:F1}");
+                      $"HP: {character.Attributes.health.CurrentValue:F1}");
 
         character.OnDeath += _ =>
             Debug.Log("[TestEnemy] Eliminated");

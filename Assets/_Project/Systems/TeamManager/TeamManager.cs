@@ -72,7 +72,7 @@ namespace VanguardProtocol.Systems
         public List<Characters.CharacterBase> GetAliveTeamMembers(Team team)
         {
             var list = team == Team.Red ? _redTeam : _blueTeam;
-            return list.Where(e => e.character.isAlive).Select(e => e.character).ToList();
+            return list.Where(e => e.character.IsAlive).Select(e => e.character).ToList();
         }
 
         public List<Characters.CharacterBase> GetAliveEnemies(Team team)
@@ -85,7 +85,7 @@ namespace VanguardProtocol.Systems
         {
             var aliveAllies = GetAliveTeamMembers(team);
             if (aliveAllies.Count == 0) return null;
-            return aliveAllies.OrderBy(c => c.attributes.health.CurrentValue).First();
+            return aliveAllies.OrderBy(c => c.Attributes.health.CurrentValue).First();
         }
 
         public Characters.CharacterBase GetNearestEnemy(Vector3 position, Team requestingTeam)
@@ -108,8 +108,8 @@ namespace VanguardProtocol.Systems
             var aliveMembers = GetAliveTeamMembers(team);
             if (aliveMembers.Count == 0) return TeamHealthState.Wiped;
 
-            float totalCurrentHealth = aliveMembers.Sum(c => c.attributes.health.CurrentValue);
-            float totalMaxHealth = aliveMembers.Sum(c => c.attributes.maxHealth.CurrentValue);
+            float totalCurrentHealth = aliveMembers.Sum(c => c.Attributes.health.CurrentValue);
+            float totalMaxHealth = aliveMembers.Sum(c => c.Attributes.maxHealth.CurrentValue);
             float healthPercentage = totalCurrentHealth / totalMaxHealth;
 
             if (healthPercentage > 0.6f) return TeamHealthState.Healthy;
@@ -133,7 +133,7 @@ namespace VanguardProtocol.Systems
         public int GetTargetingCount(Characters.CharacterBase target, Team attackingTeam)
         {
             var team = attackingTeam == Team.Red ? _redTeam : _blueTeam;
-            return team.Count(e => e.CurrentTarget == target && e.character.isAlive);
+            return team.Count(e => e.CurrentTarget == target && e.character.IsAlive);
         }
 
         public void SetCharcterTarget(Characters.CharacterBase character, Characters.CharacterBase target)
@@ -165,8 +165,8 @@ namespace VanguardProtocol.Systems
         {
             if (IsGameOver) return;
 
-            bool redTeamWiped = _redTeam.All(c => !c.character.isAlive);
-            bool blueTeamWiped = _blueTeam.All(c => !c.character.isAlive);
+            bool redTeamWiped = _redTeam.All(c => !c.character.IsAlive);
+            bool blueTeamWiped = _blueTeam.All(c => !c.character.IsAlive);
 
             if (redTeamWiped && blueTeamWiped)
             {
