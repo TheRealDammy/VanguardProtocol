@@ -18,6 +18,6 @@ MonoBehaviour:
   blockedTags: []
   effectsToApply:
   - {fileID: 11400000, guid: d3d2af4dd6270ee4b8e8719908e2b56b, type: 2}
-  _throwRange: 12
+  _throwRange: 3
   _blindRadius: 5
   _fuseTime: 0.75

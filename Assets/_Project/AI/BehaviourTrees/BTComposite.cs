@@ -58,44 +58,51 @@ namespace VanguardProtocol.AI.BehaviourTrees
     public class BTSelector : BTNode
     {
         private readonly List<BTNode> _children;
-        private int _currentIndex;
+        private int _runningChild = -1;
+
         public BTSelector(string name, List<BTNode> children) : base(name)
         {
             _children = children;
         }
+
         public override void OnEnter()
         {
-            _currentIndex = 0;
-            _children[0].OnEnter();
+            _runningChild = -1;
         }
+
         public override BTNodeStatus Tick(BTContext context)
         {
-            while (_currentIndex < _children.Count)
+            for (int i = 0; i < _children.Count; i++)
             {
-                var status = _children[_currentIndex].Tick(context);
+                bool wasRunning = (i == _runningChild);
+
+                if (!wasRunning)
+                    _children[i].OnEnter();
+
+                var status = _children[i].Tick(context);
 
                 if (status == BTNodeStatus.Running)
-                    return BTNodeStatus.Running;
-
-                if (status == BTNodeStatus.Success)
                 {
-                    _children[_currentIndex].OnExit(status);
-                    return BTNodeStatus.Success;
+                    // Higher-priority branch took over — abort the old one
+                    if (_runningChild != -1 && _runningChild != i)
+                        _children[_runningChild].OnExit(BTNodeStatus.Failure);
+
+                    _runningChild = i;
+                    return BTNodeStatus.Running;
                 }
 
-                // failure, move to next child
-                _children[_currentIndex].OnExit(status);
-                _currentIndex++;
-                if (_currentIndex < _children.Count)
-                    _children[_currentIndex].OnEnter();
+                if (wasRunning)
+                    _runningChild = -1;
+
+                _children[i].OnExit(status);
+
+                if (status == BTNodeStatus.Success)
+                    return BTNodeStatus.Success;
+
+                // Failure — fall through to next child
             }
+
             return BTNodeStatus.Failure;
-        }
-        public override void OnExit(BTNodeStatus status)
-        {
-            if (_currentIndex < _children.Count)
-                _children[_currentIndex].OnExit(status);
-            _currentIndex = 0;
         }
     }
 }

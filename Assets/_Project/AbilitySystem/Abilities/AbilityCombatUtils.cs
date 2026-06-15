@@ -8,9 +8,14 @@ namespace VanguardProtocol.AbilitySystem.Abilities
         public static bool IsEnemy(CharacterBase a, CharacterBase b)
         {
             bool aBlue = a.Tags.HasTag(GameplayTags.Team_Blue);
+            bool aRed = a.Tags.HasTag(GameplayTags.Team_Red);
             bool bBlue = b.Tags.HasTag(GameplayTags.Team_Blue);
+            bool bRed = b.Tags.HasTag(GameplayTags.Team_Red);
 
-            return aBlue != bBlue;
+            if (!aBlue && !aRed) Debug.LogWarning($"[IsEnemy] {a.name} has no team tag!");
+            if (!bBlue && !bRed) Debug.LogWarning($"[IsEnemy] {b.name} has no team tag!");
+
+            return (aBlue && bRed) || (aRed && bBlue);
         }
 
         public static void ApplyEffectToEnemiesInRadius(CharacterBase owner, Vector3 origin, float radius, GameplayEffect[] effects, string logTag)

@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using VanguardProtocol.AbilitySystem;
+using VanguardProtocol.Characters;
 
 namespace VanguardProtocol.Systems
 {
@@ -42,24 +43,26 @@ namespace VanguardProtocol.Systems
         }
 
         // -- Registration --
-        public void RegisterCharacter(Characters.CharacterBase character, Team team)
+        // TeamManager.cs — inside RegisterCharacter, before/after adding to the list
+        public void RegisterCharacter(CharacterBase character, Team team)
         {
             var entry = new CharacterEntry(character, team);
 
-            if (team == Team.Red)
+            if (team == Team.Blue)
             {
-                _redTeam.Add(entry);
+                _blueTeam.Add(entry);
+                character.SetTeam(GameplayTags.Team_Blue);
             }
             else
             {
-                _blueTeam.Add(entry);
+                _redTeam.Add(entry);
+                character.SetTeam(GameplayTags.Team_Red);
             }
 
-            // Listen for character death
             character.OnDeath += OnCharacterDied;
-
             OnCharacterRegistered?.Invoke(character, team);
-            Debug.Log($"[TeamManager] Registered {character.name} to {team} team.");
+
+            Debug.Log($"[TeamManager] Registered {character.name} → Team {team}");
         }
 
         // -- Queeries --

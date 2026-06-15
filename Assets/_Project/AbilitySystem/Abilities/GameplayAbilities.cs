@@ -52,12 +52,16 @@ namespace VanguardProtocol.AbilitySystem
         // called by AbilitySystemComponent when activating this ability
         public void TryActivate(AbilitySystemComponent asc)
         {
+            Debug.Log($"[GA] TryActivate ENTER for {abilityName} — CanActivate: {CanActivate(asc)}");
+
             if (!CanActivate(asc)) return;
 
             lastActivationTime = Time.time;
             isActive = true;
 
             asc.Owner.Tags.AddTag(GameplayTags.Ability_Active); // Add a generic active tag, could be used for global checks
+            Debug.Log($"[GA] Starting coroutine for {abilityName}");
+            asc.StartAbilityCoroutine(AbilitiyCoroutine(asc));
             OnAbilityEnded(asc);
         }
 
@@ -82,8 +86,17 @@ namespace VanguardProtocol.AbilitySystem
         // -- Private helper methods --
         private IEnumerator AbilitiyCoroutine(AbilitySystemComponent asc)
         {
-            yield return asc.Owner.StartCoroutine(ActivateAbility(asc));
-            EndAbility(asc);
+            Debug.Log($"[GA] AbilityCoroutine ENTERED for {abilityName}");
+
+            try
+            {
+                yield return ActivateAbility(asc);
+            }
+            finally
+            {
+                Debug.Log($"[GA] AbilityCoroutine EXITED for {abilityName} — calling EndAbility");
+                EndAbility(asc);
+            }
         }
 
         private bool MeetsTagRequirements(AbilitySystemComponent asc)

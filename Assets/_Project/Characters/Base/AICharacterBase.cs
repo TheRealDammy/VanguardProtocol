@@ -43,9 +43,10 @@ namespace VanguardProtocol.Characters
         // -- Navigation & Targeting --
         public void MoveTo(Vector3 destination)
         {
-            if (!IsAlive || Agent.isStopped) return;
-            Agent.SetDestination(destination);
+            if (!IsAlive) return;
+            
             Agent.isStopped = false;
+            Agent.SetDestination(destination);
         }
 
         public void StopMoving()
