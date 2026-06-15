@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using VanguardProtocol.AbilitySystem;
 using VanguardProtocol.Characters;
@@ -15,8 +16,10 @@ namespace VanguardProtocol.Combat
         [Header("References")]
         [SerializeField] private Transform _firePoint;
 
-        [Header("VFX")]
+        //[Header("VFX")]
         //[SerializeField] private ParticleSystem _muzzleFlash;
+
+        public event Action OnFired;
 
         private PlayerInputHandler _inputHandler;
         private CharacterBase _character;
@@ -49,6 +52,8 @@ namespace VanguardProtocol.Combat
             _nextFireTime = Time.time + _fireRate;
 
             //_muzzleFlash?.Play();
+
+            OnFired?.Invoke();
 
             Ray ray = _mainCamera.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f));
 
