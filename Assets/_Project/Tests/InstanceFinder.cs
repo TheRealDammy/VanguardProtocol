@@ -1,4 +1,3 @@
-// Assets/_Project/Tests/InstanceFinder.cs — delete after
 using UnityEngine;
 using VanguardProtocol.Characters;
 
@@ -6,7 +5,7 @@ public class InstanceFinder : MonoBehaviour
 {
     private void Start()
     {
-        var all = FindObjectsOfType<CharacterBase>();
+        var all = FindObjectsByType<CharacterBase>(FindObjectsSortMode.None);
 
         Debug.Log($"[InstanceFinder] Found {all.Length} CharacterBase instances:");
 

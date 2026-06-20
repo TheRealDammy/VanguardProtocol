@@ -27,10 +27,6 @@ namespace VanguardProtocol.AbilitySystem
         private void Awake()
         {
             Owner = GetComponent<CharacterBase>();
-            if (Owner == null)
-            {
-                Debug.LogError("AbilitySystemComponent requires a CharacterBase component on the same GameObject.");
-            }
         }
 
         private void Update()
@@ -60,35 +56,23 @@ namespace VanguardProtocol.AbilitySystem
 
         public bool TryActivateAbility(GameplayTag abilityTag)
         {
-            Debug.Log($"[ASC] TryActivate called: {abilityTag} (Hash: {abilityTag.hash}) on {Owner.name}");
-
             if (Owner.Tags.HasTag(GameplayTags.Ability_Blocked))
             {
-                Debug.Log($"[ASC] Blocked by Ability_Blocked tag");
                 return false;
             }
             if (Owner.Tags.HasTag(GameplayTags.Status_AbilityDisabled))
             {
-                Debug.Log($"[ASC] Blocked by Status_AbilityDisabled tag");
                 return false;
             }
 
             var ability = GetAbilityByTag(abilityTag);
             if (ability == null)
             {
-                Debug.LogWarning($"[ASC] No ability with tag {abilityTag} (Hash: {abilityTag.hash}) " +
-                                  $"granted to {Owner.name}. Granted abilities:");
-                foreach (var a in _grantedAbilities)
-                    Debug.LogWarning($"  - {a.abilityName}: {a.abilityTag} (Hash: {a.abilityTag.hash})");
                 return false;
             }
 
             if (!ability.CanActivate(this))
             {
-                Debug.Log($"[ASC] CanActivate false — " +
-                          $"IsActive:{ability.isActive} " +
-                          $"CooldownReady:{ability.IsCoolDownReady(this)} " +
-                          $"CooldownRemaining:{ability.GetCooldownRemaining():F2}");
                 return false;
             }
 

@@ -31,14 +31,12 @@ namespace VanguardProtocol.Characters
 
             if (_attributeConfig == null)
             {
-                Debug.LogError("AttributeSetConfig is not assigned on " + gameObject.name);
                 return;
             }
 
             AbilitySystem = GetComponent<AbilitySystemComponent>();
             if (AbilitySystem == null)
             {
-                Debug.LogError("CharacterBase requires an AbilitySystemComponent on the same GameObject.");
                 return;
             }
 

@@ -16,8 +16,6 @@ namespace VanguardProtocol.AbilitySystem.Abilities
         {
             abilityTag = GameplayTags.Ability_Rook_Flashbang;
             cooldownDuration = 8f;
-
-            Debug.Log($"[GA] OnEnable — AbilityTag: {abilityTag} | Hash: {abilityTag.hash}");
         }
 
         protected override IEnumerator ActivateAbility(AbilitySystemComponent asc)
@@ -25,17 +23,9 @@ namespace VanguardProtocol.AbilitySystem.Abilities
             var owner = asc.Owner;
             Vector3 target = GetThrowTarget(owner);
 
-            Debug.Log($"[Flashbang] {owner.name} threw toward {target} " +
-                      $"(distance from owner: {Vector3.Distance(owner.transform.position, target):F1})");
-
             yield return new WaitForSeconds(_fuseTime);
 
-            Debug.Log($"[Flashbang] DETONATE at {target} — checking radius {_blindRadius}");
-
             var hits = Physics.OverlapSphere(target, _blindRadius);
-            Debug.Log($"[Flashbang] OverlapSphere found {hits.Length} colliders");
-            foreach (var h in hits)
-                Debug.Log($"  - {h.gameObject.name} (layer: {LayerMask.LayerToName(h.gameObject.layer)})");
 
             AbilityCombatUtils.ApplyEffectToEnemiesInRadius(
                 owner, target, _blindRadius, effectsToApply, "Flashbang");

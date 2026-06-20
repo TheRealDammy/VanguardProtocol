@@ -61,8 +61,6 @@ namespace VanguardProtocol.Systems
 
             character.OnDeath += OnCharacterDied;
             OnCharacterRegistered?.Invoke(character, team);
-
-            Debug.Log($"[TeamManager] Registered {character.name} → Team {team}");
         }
 
         // -- Queeries --
@@ -157,8 +155,6 @@ namespace VanguardProtocol.Systems
 
             character.OnDeath -= OnCharacterDied;
 
-            Debug.Log($"[TeamManager] {character.name} from {entry.Team} team has been eliminated.");
-
             OnCharacterEliminated?.Invoke(character, entry.Team);
 
             EvaluateMatchState(entry.Team);
@@ -174,19 +170,16 @@ namespace VanguardProtocol.Systems
             if (redTeamWiped && blueTeamWiped)
             {
                 IsGameOver = true;
-                Debug.Log("[TeamManager] Both teams wiped! It's a draw!");
             }
             else if (redTeamWiped)
             {
                 IsGameOver = true;
-                Debug.Log("[TeamManager] Red team wiped! Blue team wins!");
                 OnTeamWiped?.Invoke(Team.Blue);
                 EndMatch(Team.Blue);
             }
             else if (blueTeamWiped)
             {
                 IsGameOver = true;
-                Debug.Log("[TeamManager] Blue team wiped! Red team wins!");
                 OnTeamWiped?.Invoke(Team.Red);
                 EndMatch(Team.Red);
             }
@@ -195,7 +188,6 @@ namespace VanguardProtocol.Systems
         private void EndMatch(Team winningTeam)
         {
             IsGameOver = true;
-            Debug.Log($"[TeamManager] Match over! Team {winningTeam} wins!");
             OnMatchOver?.Invoke(winningTeam);
         }
 

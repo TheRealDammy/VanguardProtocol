@@ -49,7 +49,6 @@ namespace VanguardProtocol.Systems
         {
             if (TeamManager.Instance == null)
             {
-                Debug.LogError("MatchStateManager requires TeamManager to function.");
                 return;
             }
             else
@@ -81,7 +80,6 @@ namespace VanguardProtocol.Systems
         {
             if (CurrentState != MatchState.Idle)
             {
-                Debug.LogWarning("Cannot start match. Current state: " + CurrentState);
                 return;
             }
             StartCoroutine(MatchSequence());
@@ -109,21 +107,16 @@ namespace VanguardProtocol.Systems
             TransitionTo(MatchState.Deployment);
             OnMatchStarted?.Invoke();
 
-            Debug.Log($"[MatchStateManager] Match started. Deployment phase begins" + $"- {_deploymentDuration} until combat");
             yield return new WaitForSeconds(_deploymentDuration);
 
             // Combat Phase
             TransitionTo(MatchState.Combat);
             OnCombatStarted?.Invoke();
 
-            Debug.Log($"[MatchStateManager] Combat phase begins. Max duration: {_maxMatchDuration} seconds");
-
             while (CombatTimer < _maxMatchDuration)
             {
                 yield return null;
             }
-
-            Debug.Log($"[MatchStateManager] Max match duration reached. Ending match.");
         }
 
         private void HandleMatchOver(Team winningTeam)
@@ -132,8 +125,6 @@ namespace VanguardProtocol.Systems
                 return;
             TransitionTo(MatchState.Resolution);
             OnMatchResolved?.Invoke(winningTeam);
-
-            Debug.Log($"[MatchStateManager] Match over! Winning team: {winningTeam} | Time: {GetMatchTime()}");
         }
 
         private void TransitionTo(MatchState newState)
@@ -142,8 +133,6 @@ namespace VanguardProtocol.Systems
             CurrentState = newState;
 
             OnStateChanged?.Invoke(oldState, newState);
-
-            Debug.Log($"[MatchStateManager] State changed: {oldState} -> {newState}");
         }
 
         private string FormatTime(float time)

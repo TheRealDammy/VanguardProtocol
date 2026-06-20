@@ -21,6 +21,15 @@ namespace VanguardProtocol.Characters
         public CharacterBase CurrentTarget { get; private set; }
         public CharacterBase CurrentAllyNeed { get; private set; }
 
+
+        private float _lastDamageTime = -999f;
+        private bool _isInCover;
+
+        // Properties queried by scoring functions
+        public bool IsTakingDamage => Time.time - _lastDamageTime < 1.5f;
+        public bool IsInCover => _isInCover;
+        public void SetInCover(bool value) => _isInCover = value;
+
         protected override void Awake()
         {
             base.Awake();
@@ -38,6 +47,13 @@ namespace VanguardProtocol.Characters
             Agent.speed = Attributes.moveSpeed.CurrentValue;
 
             OnDeath += _ => Agent.isStopped = true;
+
+            BindDamageTracking();
+        }
+
+        private void BindDamageTracking()
+        {
+            OnDamageTaken += (_, _) => _lastDamageTime = Time.time;
         }
 
         // -- Navigation & Targeting --

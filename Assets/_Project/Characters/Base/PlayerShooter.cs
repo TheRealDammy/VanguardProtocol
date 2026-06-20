@@ -78,9 +78,6 @@ namespace VanguardProtocol.Combat
 
             float damage = _character.Attributes.attackDamage.CurrentValue;
             target.TakeDamage(damage, _character);
-
-            Debug.Log($"[Shooter] {_character.name} hit {target.name} " +
-                      $"for {damage}. Target HP: {target.Attributes.health.CurrentValue:F1}");
         }
 
         private void DrawDebugRay(Vector3 origin, Vector3 direction, Color color)

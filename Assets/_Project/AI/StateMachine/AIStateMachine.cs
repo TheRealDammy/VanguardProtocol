@@ -39,8 +39,6 @@ namespace VanguardProtocol.Characters
             SyncStateTags(PreviousState, CurrentState);
 
             OnStateChanged?.Invoke(PreviousState, CurrentState);
-
-            Debug.Log($"[AIStateMachine] {_owner.name} Transitioned from {PreviousState} to {CurrentState}");
         }
 
         public bool IsInState(AIStateType state) => CurrentState == state;

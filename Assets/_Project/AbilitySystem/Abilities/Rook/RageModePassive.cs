@@ -17,7 +17,6 @@ namespace VanguardProtocol.AbilitySystem.Abilities
         {
             if (_character == null || _character.Tags == null)
             {
-                Debug.LogError($"[RageMode] Missing CharacterBase/Tags on {gameObject.name}");
                 return;
             }
 
@@ -41,7 +40,6 @@ namespace VanguardProtocol.AbilitySystem.Abilities
                 "AttackDamage", ModificationType.Multiplicative, _attackMultiplier));
 
             _isActive = true;
-            Debug.Log($"[RageMode] {_character.name} ATK x{_attackMultiplier}");
         }
 
         private void HandleTagRemoved(GameplayTag tag)
@@ -52,7 +50,6 @@ namespace VanguardProtocol.AbilitySystem.Abilities
                 "AttackDamage", ModificationType.Multiplicative, 1f / _attackMultiplier));
 
             _isActive = false;
-            Debug.Log($"[RageMode] {_character.name} ATK restored");
         }
     }
 }

@@ -17,7 +17,6 @@ namespace VanguardProtocol.AbilitySystem.Abilities
             abilityTag = GameplayTags.Ability_Rook_ShoulderBash;
             cooldownDuration = 4f;
 
-            Debug.Log($"[GA] OnEnable — AbilityTag: {abilityTag} | Hash: {abilityTag.hash}");
         }
 
         protected override IEnumerator ActivateAbility(AbilitySystemComponent asc)
@@ -25,10 +24,6 @@ namespace VanguardProtocol.AbilitySystem.Abilities
             var owner = asc.Owner;
             var controller = owner.GetComponent<CharacterController>();
             var agent = owner.GetComponent<NavMeshAgent>();
-
-            Debug.Log($"[ShoulderBash] START — owner: {owner.name} | " +
-                      $"controller: {controller != null} | agent: {agent != null} | " +
-                      $"forward: {owner.transform.forward}");
 
             Vector3 dir = owner.transform.forward;
             float speed = _dashDistance / _dashDuration;
@@ -45,13 +40,7 @@ namespace VanguardProtocol.AbilitySystem.Abilities
                 yield return null;
             }
 
-            Debug.Log($"[ShoulderBash] DASH COMPLETE — pos: {owner.transform.position} | " +
-                      $"checking radius {_staggerRadius} for enemies");
-
             var hits = Physics.OverlapSphere(owner.transform.position, _staggerRadius);
-            Debug.Log($"[ShoulderBash] OverlapSphere found {hits.Length} colliders");
-            foreach (var h in hits)
-                Debug.Log($"  - {h.gameObject.name} (layer: {LayerMask.LayerToName(h.gameObject.layer)})");
 
             AbilityCombatUtils.ApplyEffectToEnemiesInRadius(
                 owner, owner.transform.position, _staggerRadius,

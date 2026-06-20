@@ -12,7 +12,7 @@ namespace VanguardProtocol.Characters
     {
         [Header("Settings")]
         [SerializeField] private float _sprintMultiplier = 1.6f;
-        [SerializeField] private float _rotationSpeed = 12f;
+        //[SerializeField] private float _rotationSpeed = 12f;
         [SerializeField] private float _rollCooldown = 0.6f;
         [SerializeField] private float _rollDistance = 4f;
         [SerializeField] private float _rollDuration = 0.3f;

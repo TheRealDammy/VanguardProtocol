@@ -35,13 +35,6 @@ namespace VanguardProtocol.Characters
 
         private void Refresh()
         {
-            Debug.Log($"[Tint] Refresh on {gameObject.name} — " +
-              $"Staggered: {_character.Tags.HasTag(GameplayTags.Status_Staggered)} | " +
-              $"Blinded: {_character.Tags.HasTag(GameplayTags.Status_Blinded)} | " +
-              $"LowHP: {_character.Tags.HasTag(GameplayTags.State_LowHealth)} | " +
-              $"renderer null: {_renderer == null}");
-
-
             if (_renderer == null) return;
 
             Color target = _baseColor;
